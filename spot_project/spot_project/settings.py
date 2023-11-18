@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'rest_framework',
     'django.contrib.staticfiles',
+    'spot' #added to allow for migrations to the DB
 ]
 
 MIDDLEWARE = [

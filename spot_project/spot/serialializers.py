@@ -9,7 +9,7 @@ from .models import Survey
 Create the serializers for each model here
 """
 
-##Serializer is used to 
+##Serializer is used as a SERDE of the JSON data being sent to and from the SWIFT app to handle consistent dataflow
 class SurveySerializer(serializers.ModelSerializer):
     class Meta:
         model = Survey
