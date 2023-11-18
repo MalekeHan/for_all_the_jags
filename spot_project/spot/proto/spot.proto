@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+
+service LocationService {
+  rpc LocationSession(stream QueryUpdate) returns (stream Location) {}
+}
+
+// events from the client
+message QueryUpdate {
+  oneof location {
+    LocationPan pan = 1;
+    LocationZoom zoom = 2;
+    Parameter parameter = 3;
+  }
+}
+
+message LocationPan {
+  double lat = 1;
+  double lon = 2;
+}
+
+message LocationZoom {
+  double radius = 1;
+}
+
+enum FilterType {
+  CATEGORY = 0;
+  ATTRIBUTES = 1;
+}
+
+message Parameter {
+  FilterType type = 1;
+  string value = 2;
+  bool add = 3;
+}
+
+// location response
+message Location {
+  string id = 1;
+  double lat = 2;
+  double lon = 3;
+  string name = 4;
+  string category = 5;
+  string attributes = 6;
+}
