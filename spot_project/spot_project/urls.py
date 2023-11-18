@@ -20,7 +20,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 #from spot.views import SearchView
-from spot.views import SearchViewSet
+from spot.views import SearchViewSet, SurveyViewSet, SurveyAggregateView
 
 """
 from views import viewsets
@@ -32,9 +32,11 @@ register routes here
 router.register(r'ROUTE', VIEWSET)
 """
 router.register(r'search', SearchViewSet, basename='search')
+router.register(r'surveys', SurveyViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
    # path('search/', SearchView.as_view(), name='index'),
     path('admin/', admin.site.urls),
+    path('aggregate/', SurveyAggregateView.as_view(), name='survey-aggregate'),
 ]

@@ -2,6 +2,11 @@ from django.db import models
 
 # Create your models here.
 
+## Location of the Spot
+class Location(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+
 class Survey(models.Model):
     BUSY_CHOICES = [
         ('NB', 'Not busy'),
@@ -33,6 +38,8 @@ class Survey(models.Model):
         ('DP', 'Very difficult parking'),
     ]
 
+    
+
     # Model Fields
     busy_level = models.CharField(max_length=2, choices=BUSY_CHOICES, default='NB')
     comfort_level = models.CharField(max_length=2, choices=COMFORT_CHOICES, default='VC')
@@ -40,5 +47,8 @@ class Survey(models.Model):
     noise_level = models.CharField(max_length=2, choices=NOISE_CHOICES, default='QZ')
     parking_situation = models.CharField(max_length=2, choices=PARKING_CHOICES, default='EP')
 
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, default=None) # location of the spot
+
     def __str__(self):
         return f"Survey #{self.id}"
+    
