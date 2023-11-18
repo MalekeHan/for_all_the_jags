@@ -19,7 +19,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from spot.views import SearchView
+#from spot.views import SearchView
+from spot.views import SearchViewSet
 
 """
 from views import viewsets
@@ -30,9 +31,10 @@ router = DefaultRouter()
 register routes here
 router.register(r'ROUTE', VIEWSET)
 """
+router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('search/', SearchView.as_view(), name='index'),
+   # path('search/', SearchView.as_view(), name='index'),
     path('admin/', admin.site.urls),
 ]
