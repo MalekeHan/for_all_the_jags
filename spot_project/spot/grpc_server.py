@@ -110,21 +110,21 @@ class LocationServicer(LocationServiceServicer):
 
         response = YelpHandler.search(params)
         for business in response["businesses"]:
-            print(business["name"])
             location, _ = Location.objects.get_or_create(
+                id=business["id"],
                 name=business["name"],
                 lat=business["coordinates"]["latitude"],
                 lon=business["coordinates"]["longitude"],
-                yelp_id=business["id"],
             )
             state.add_location(location)
             print(location)
+            print(location.id, location.name, location.lat, location.lon)
             update = StreamUpdate(
                 location=ProtoLocation(
                     id=location.id,
                     lat=location.lat,
                     lon=location.lon,
-                    name="Tesating",
+                    name=location.name,
                     category="c",
                     attributes="a",
                 )
