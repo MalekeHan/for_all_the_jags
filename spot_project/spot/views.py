@@ -46,12 +46,10 @@ class SurveyViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-            location_id = serializer.data.get('location')
-            if location_id:
-                Survey.get_weighted_avg(location_id)
-
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        print(serializer.errors)  # Log the errors
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class SurveyAggregateView(APIView):
