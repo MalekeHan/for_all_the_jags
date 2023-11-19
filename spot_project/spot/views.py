@@ -10,6 +10,10 @@ from rest_framework.views import APIView, Response
 from spot.yelp import YelpHandler
 
 from .models import Survey
+from .test_client import run
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 #from .serializers import SurveySerializer
 
 """
@@ -55,3 +59,27 @@ class SurveyAggregateView(APIView):
 
         return Response(aggregated_data)
 
+
+@csrf_exempt
+def location_update_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            lat = data['lat']
+            lon = data['lon']
+
+            # Here, you might want to validate the lat and lon values
+            # ...
+
+            # Call the modified gRPC client function
+            response = run(lat, lon)
+
+            # Format and send the response back to the Swift client
+            # Adjust the response format based on your specific requirements
+            return JsonResponse({'response': response})
+        except KeyError:
+            return JsonResponse({'error': 'Latitude and longitude are required.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)

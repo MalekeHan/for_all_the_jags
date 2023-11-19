@@ -20,7 +20,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 #from spot.views import SearchView
-from spot.views import SearchViewSet, SurveyViewSet, SurveyAggregateView
+from spot.views import SearchViewSet, SurveyViewSet, SurveyAggregateView, location_update_view
 
 """
 from views import viewsets
@@ -39,4 +39,5 @@ urlpatterns = [
    # path('search/', SearchView.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('aggregate/', SurveyAggregateView.as_view(), name='survey-aggregate'),
+    path('update-location/', location_update_view, name='update-location'),
 ]
