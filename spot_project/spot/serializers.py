@@ -5,7 +5,7 @@ import spot.proto.spot_pb2 as spot_pb2
 """
 from models import MODEL
 """
-from .models import Survey
+from .models import Survey , Location
 
 """
 Create the serializers for each model here
@@ -16,6 +16,11 @@ class SurveySerializer(serializers.ModelSerializer):
     class Meta:
         model = Survey
         fields = '__all__'  # Or list specific fields if needed
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = '__all__'  # Serialize all fields from the Location model
 
 class LocationPanProtoSerializer(proto_serializers.ProtoSerializer):
     lat = serializers.FloatField()

@@ -10,7 +10,8 @@ from rest_framework.views import APIView, Response
 from spot.yelp import YelpHandler
 
 from .models import Survey
-#from .serializers import SurveySerializer
+from rest_framework import status
+from .serializers import SurveySerializer
 
 """
 from models import MODELS
@@ -38,11 +39,19 @@ class SearchViewSet(ViewSet):
     
 class SurveyViewSet(viewsets.ModelViewSet):
     queryset = Survey.objects.all()
-    #serializer_class = SurveySerializer
+    serializer_class = SurveySerializer
 
     def create(self, request, *args, **kwargs):
-        # Add custom logic for POST request if necessary
-        return super().create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            location_id = serializer.data.get('location')
+            if location_id:
+                Survey.get_weighted_avg(location_id)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SurveyAggregateView(APIView):
