@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import spot_pb2 as spot__pb2
+from . import spot_pb2 as spot__pb2
 
 
 class LocationServiceStub(object):
@@ -17,7 +17,7 @@ class LocationServiceStub(object):
         self.LocationSession = channel.stream_stream(
                 '/LocationService/LocationSession',
                 request_serializer=spot__pb2.QueryUpdate.SerializeToString,
-                response_deserializer=spot__pb2.Location.FromString,
+                response_deserializer=spot__pb2.StreamUpdate.FromString,
                 )
 
 
@@ -36,7 +36,7 @@ def add_LocationServiceServicer_to_server(servicer, server):
             'LocationSession': grpc.stream_stream_rpc_method_handler(
                     servicer.LocationSession,
                     request_deserializer=spot__pb2.QueryUpdate.FromString,
-                    response_serializer=spot__pb2.Location.SerializeToString,
+                    response_serializer=spot__pb2.StreamUpdate.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -61,6 +61,6 @@ class LocationService(object):
             metadata=None):
         return grpc.experimental.stream_stream(request_iterator, target, '/LocationService/LocationSession',
             spot__pb2.QueryUpdate.SerializeToString,
-            spot__pb2.Location.FromString,
+            spot__pb2.StreamUpdate.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
