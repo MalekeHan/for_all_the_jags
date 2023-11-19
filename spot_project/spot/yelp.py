@@ -15,7 +15,7 @@ class YelpHandler:
         url = "https://api.yelp.com/v3/businesses/search"
         headers = YelpHandler.make_headers()
         response = requests.get(url, headers=headers, params=params)
-        print(response)
+        #print(response.status_code,response.json())
         return response.json()
 
     class QueryBuilder:

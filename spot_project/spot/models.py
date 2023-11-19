@@ -10,8 +10,10 @@ from django.utils.timezone import make_aware
 
 ## Location of the Spot
 class Location(models.Model):
+    id = models.CharField(max_length=255, primary_key=True)
     name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
+    lat = models.FloatField(default=0.0)
+    lon = models.FloatField(default=0.0)
 
 class Survey(models.Model):
     BUSY_CHOICES = [
