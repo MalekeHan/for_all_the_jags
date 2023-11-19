@@ -1,8 +1,7 @@
 syntax = "proto3";
 
-
 service LocationService {
-  rpc LocationSession(stream QueryUpdate) returns (stream Location) {}
+  rpc LocationSession(stream QueryUpdate) returns (stream StreamUpdate) {}
 }
 
 // events from the client
@@ -34,7 +33,14 @@ message Parameter {
   bool add = 3;
 }
 
-// location response
+// updates from the server
+message StreamUpdate {
+  oneof update {
+    Location location = 1;
+    Flush flush = 2;
+  }
+}
+
 message Location {
   string id = 1;
   double lat = 2;
@@ -43,3 +49,5 @@ message Location {
   string category = 5;
   string attributes = 6;
 }
+
+message Flush {}
