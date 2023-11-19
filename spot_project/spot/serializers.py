@@ -1,3 +1,4 @@
+from grpc import enum
 from rest_framework import serializers
 from django_grpc_framework import proto_serializers
 import spot.proto.spot_pb2 as spot_pb2
@@ -29,8 +30,12 @@ class LocationZoomProtoSerializer(proto_serializers.ProtoSerializer):
     class Meta:
         proto_class = spot_pb2.LocationZoom
 
+class FilterType(enum.Enum):
+    CATEGORY = 0
+    ATTRIBUTES = 1
+
 class ParameterProtoSerializer(proto_serializers.ProtoSerializer):
-    type = serializers.ChoiceField(choices=spot_pb2.FilterType.values)
+    type = serializers.ChoiceField(choices=FilterType, source='type', default=FilterType.CATEGORY)
     value = serializers.CharField(max_length=100)
     add = serializers.BooleanField()
 
@@ -63,5 +68,24 @@ class QueryUpdateProtoSerializer(proto_serializers.ProtoSerializer):
             return spot_pb2.QueryUpdate(zoom=validated_data['zoom'])
         elif 'parameter' in validated_data:
             return spot_pb2.QueryUpdate(parameter=validated_data['parameter'])
+        else:
+            raise serializers.ValidationError("Invalid data")
+
+class FlushSerializer(proto_serializers.ProtoSerializer):
+    class Meta:
+        proto_class = spot_pb2.Flush
+
+class StreamUpdateProtoSerializer(proto_serializers.ProtoSerializer):
+    location = LocationProtoSerializer()
+    flush = FlushSerializer()
+
+    class Meta:
+        proto_class = spot_pb2.StreamUpdate
+
+    def create(self, validated_data):
+        if 'location' in validated_data:
+            return spot_pb2.StreamUpdate(location=validated_data['location'])
+        elif 'flush' in validated_data:
+            return spot_pb2.StreamUpdate(flush=validated_data['flush'])
         else:
             raise serializers.ValidationError("Invalid data")

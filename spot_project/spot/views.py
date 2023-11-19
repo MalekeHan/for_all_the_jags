@@ -10,7 +10,7 @@ from rest_framework.views import APIView, Response
 from spot.yelp import YelpHandler
 
 from .models import Survey
-from .serializers import SurveySerializer
+#from .serializers import SurveySerializer
 
 """
 from models import MODELS
@@ -38,7 +38,7 @@ class SearchViewSet(ViewSet):
     
 class SurveyViewSet(viewsets.ModelViewSet):
     queryset = Survey.objects.all()
-    serializer_class = SurveySerializer
+    #serializer_class = SurveySerializer
 
     def create(self, request, *args, **kwargs):
         # Add custom logic for POST request if necessary

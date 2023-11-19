@@ -2,12 +2,10 @@ from typing import Iterator
 import grpc
 from concurrent import futures
 
-from spot.proto.spot_pb2 import Parameter, QueryUpdate, StreamUpdate
+from spot.proto.spot_pb2 import Parameter, QueryUpdate
 from spot.proto.spot_pb2_grpc import LocationServiceServicer, add_LocationServiceServicer_to_server
 from spot.models import Survey
 from spot.models import Location
-from spot.proto.spot_pb2 import Location as ProtoLocation
-from spot.serializers import StreamUpdateProtoSerializer
 from spot.yelp import YelpHandler
 from geopy.distance import geodesic
 
@@ -91,10 +89,14 @@ class LocationServicer(LocationServiceServicer):
                 print("Received unknown update")
                 continue
 
-            #state.invalidate_cache()
+            state.invalidate_cache()
 
-            #yield from locs
-            yield from self.search_yelp(state)
+            locs = state.locations
+            print("state.locs", locs)
+            yield from locs
+            locs = self.search_yelp(state)
+            locs = state.locations
+            print("state.locs", locs)
 
     @staticmethod
     def search_yelp(state: SessionState):
@@ -108,28 +110,18 @@ class LocationServicer(LocationServiceServicer):
         builder.attributes(state.attributes)
         params = builder.build()
 
-        response = YelpHandler.search(params)
-        for business in response["businesses"]:
-            print(business["name"])
-            location, _ = Location.objects.get_or_create(
-                name=business["name"],
-                lat=business["coordinates"]["latitude"],
-                lon=business["coordinates"]["longitude"],
-                yelp_id=business["id"],
+        businesses = YelpHandler.search(params)
+        for business in businesses:
+            print("Found business: " + business.name)
+            location = Location.objects.get_or_create(
+                name=business.name,
+                lat=business.latitude,
+                lon=business.longitude,
+                yelp_id=business.id
             )
             state.add_location(location)
             print(location)
-            update = StreamUpdate(
-                location=ProtoLocation(
-                    id=location.id,
-                    lat=location.lat,
-                    lon=location.lon,
-                    name="Tesating",
-                    category="c",
-                    attributes="a",
-                )
-            )
-            yield update
+            yield location
 
 
 def serve():
